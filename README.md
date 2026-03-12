@@ -45,7 +45,7 @@ Key contributions:
 
 ## 🚀 How to Reproduce
 
-### Option 1: Google Colab (Recommended)
+### Google Colab (Recommended)
 
 1. Open [Google Colab](https://colab.research.google.com/)
 2. Upload `IDSC2026_Brugada_Starter_v14.ipynb`
@@ -53,25 +53,6 @@ Key contributions:
 4. Cell 2 installs all dependencies and downloads the dataset automatically from PhysioNet
 
 > **Note:** The dataset (~180 MB) is downloaded directly from PhysioNet in Cell 2. No manual download needed.
-
-### Option 2: Kaggle Notebook
-
-The notebook is also available at:  
-[https://www.kaggle.com/code/candralorensia/brugada](https://www.kaggle.com/code/candralorensia/brugada)
-
-### Option 3: Local Environment
-
-```bash
-# Clone repo
-git clone <repo-url>
-cd <repo-folder>
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Launch notebook
-jupyter lab IDSC2026_Brugada_Starter_v14.ipynb
-```
 
 ---
 
@@ -134,6 +115,12 @@ NPV = 0.925: when the model predicts "Normal", 92.5% of those patients are genui
 - Single-center dataset (HUCA, Spain): distribution shift risk for Southeast Asian populations.
 - Low signal resolution (100 Hz vs. ≥500 Hz clinical standard).
 - This model is a **screening aid only** — not a replacement for electrophysiologist diagnosis.
+
+---
+
+## Finally, There's Always Hope
+
+Our research indicates that modern smartwatches, capable of recording ECG data at frequencies between 100 Hz and 250 Hz, offer a transformative opportunity to bridge the gap between consumer technology and clinical diagnostics. By aggregating data from both healthy individuals and those with Brugada Syndrome, we can develop increasingly sophisticated models that—while not yet a replacement for clinical standards—provide a vital starting point for early detection. Central to this vision is a commitment to **data ethics and transparency**; we aim to collect this information solely through voluntary contributions via a dedicated app or web portal, ensuring users have full agency over their data. We remain optimistic that as these technologies evolve, the synergy between high-fidelity hardware and trained models will eventually meet professional benchmarks, offering a life-saving tool for many in the years to come.
 
 ---
 
