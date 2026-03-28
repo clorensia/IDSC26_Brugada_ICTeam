@@ -1,16 +1,20 @@
 # Brugada Syndrome Detection from ECG Signals
+
 **IDSC 2026 — IC Team**  
 Universitas Terbuka / Universitas Insan Cita Indonesia
 
 [![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![IDSC 2026](https://img.shields.io/badge/Competition-IDSC%202026-orange)](https://idsc2026.github.io/)
+[![Competition](https://img.shields.io/badge/IDSC-2026-orange)](https://idsc2026.github.io/)
+[![Reproducibility](https://img.shields.io/badge/Reproducibility-Full%20Pipeline-brightgreen)]()
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1tFqvWZJCOnxTFL-_UfzgPPMvZm5h9ES9?usp=sharing)
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-black?logo=github)](https://github.com/clorensia/IDSC26_Brugada_ICTeam)
 
 | | |
 |---|---|
 | **Team** | IC Team |
 | **Members** | Latifah Munawaroh, Candra Lorensia Ardiyanti |
+| **Institution** | Universitas Terbuka / Universitas Insan Cita Indonesia |
 | **Dataset** | [Brugada-HUCA](https://physionet.org/content/brugada-huca/1.0.0/) (PhysioNet) |
 | **Task** | Binary classification: Brugada Syndrome vs. Normal |
 | **Best Result** | Recall = 0.800, AUC-ROC = 0.716 (threshold = 0.40) |
@@ -20,10 +24,15 @@ Universitas Terbuka / Universitas Insan Cita Indonesia
 ## Table of Contents
 
 - [Overview](#overview)
+- [One-Click Reproducibility](#one-click-reproducibility-recommended)
+- [Reproducibility Statement](#reproducibility-statement)
+- [Dataset](#dataset)
+- [Pipeline Summary](#pipeline-summary)
 - [Repository Structure](#repository-structure)
 - [How to Reproduce](#how-to-reproduce)
 - [Notebook Structure](#notebook-structure)
 - [Results Summary](#results-summary)
+- [Interpretability](#interpretability)
 - [Important Caveats](#important-caveats)
 - [There's Always Hope](#theres-always-hope)
 - [Citations](#citations)
@@ -32,14 +41,91 @@ Universitas Terbuka / Universitas Insan Cita Indonesia
 
 ## Overview
 
-This project builds a machine learning pipeline to detect **Brugada Syndrome** from 12-lead ECG recordings using the Brugada-HUCA dataset (363 subjects: 76 Brugada, 287 Normal). The pipeline prioritizes **Recall** (Sensitivity) as the primary metric. For a screening tool, missing a Brugada patient is far more dangerous than a false alarm.
+This project builds a **fully reproducible machine learning pipeline** to detect **Brugada Syndrome** from 12-lead ECG recordings using the **Brugada-HUCA PhysioNet dataset** (363 subjects: 76 Brugada, 287 Normal).
+
+The system is designed as a **screening tool**, prioritizing **Recall (Sensitivity)** to minimize missed high-risk patients. For a screening tool, missing a Brugada patient is far more dangerous than a false alarm.
 
 Key contributions:
-- 43-feature pipeline built on clinically relevant V1-V3 morphology (ST-T segment, HRV, frequency domain)
-- Threshold optimization via Youden's J: Recall 0.667 to 0.800
+- 43-feature pipeline built on clinically relevant V1–V3 morphology (ST-T segment, HRV, frequency domain)
+- Logistic Regression with class balancing (`class_weight='balanced'`)
+- Threshold optimization via Youden's J: Recall 0.667 → 0.800
 - SHAP interpretability aligned with Type-1 Brugada diagnostic criteria
 - Clinical metrics: NPV = 0.925 supports rule-out screening utility
-- Ablation study: V1-V3 vs. all-12-leads
+- Ablation study: V1–V3 vs. all-12-leads
+- End-to-end reproducibility via Google Colab
+
+---
+
+## One-Click Reproducibility
+
+Run the entire pipeline in **one click**:
+
+👉 [https://colab.research.google.com/drive/1tFqvWZJCOnxTFL-_UfzgPPMvZm5h9ES9](https://colab.research.google.com/drive/1tFqvWZJCOnxTFL-_UfzgPPMvZm5h9ES9?usp=sharing)
+
+Steps:
+
+1. Open the link above
+2. Click **Runtime → Run All**
+3. Wait until completion (~10–15 minutes)
+
+✔ Dataset downloaded automatically (~180 MB)  
+✔ No local setup required  
+✔ Fully reproducible pipeline  
+
+---
+
+## Reproducibility Statement
+
+This repository ensures reproducibility through:
+
+- Fixed random seed: `RANDOM_STATE = 42`
+- Deterministic preprocessing pipeline
+- Automated dataset download via `wfdb` (no manual handling)
+- Fully documented feature engineering
+- Single notebook execution (top-to-bottom)
+
+**Expected results after execution:**
+
+| Metric             | Value  |
+|--------------------|--------|
+| AUC-ROC            | ~0.716 |
+| Recall (default)   | ~0.667 |
+| Recall (optimized) | ~0.800 |
+
+> If results differ: ensure all cells are executed sequentially, do not modify the notebook, and check your runtime environment.
+
+---
+
+## Dataset
+
+- **Source:** PhysioNet — [Brugada-HUCA (v1.0.0)](https://physionet.org/content/brugada-huca/1.0.0/)
+- **Subjects:** 363 (76 Brugada, 287 Normal)
+- **Signal:** 12-lead ECG, 12 seconds, 100 Hz
+
+Downloaded automatically via `wfdb` in the notebook. No manual download needed.
+
+---
+
+## Pipeline Summary
+
+**Preprocessing**
+- Bandpass filter (0.5–40 Hz)
+- Z-score normalization
+
+**Feature Engineering (43 features)**
+- Statistical features
+- ST-T morphology (V1–V3)
+- Heart Rate Variability (HRV)
+- Frequency domain (PSD)
+
+**Modeling**
+- Logistic Regression (selected)
+- Class imbalance handled via `class_weight='balanced'`
+- Stratified 5-Fold Cross Validation
+
+**Threshold Optimization**
+- Default: 0.50
+- Optimized: 0.40 (Youden's J)
 
 ---
 
@@ -54,7 +140,7 @@ repo/
 │   └── IDSC2026_Brugada_ICTeam.ipynb        # Main notebook (run top-to-bottom)
 │
 ├── report/
-│   └── IDSC2026_TechReport_ICTeam.pdf        # Tech report (PDF)
+│   └── IDSC2026_TechReport_ICTeam.pdf        # Technical report (PDF)
 │
 ├── figures/                                   # Auto-generated by notebook
 │   ├── fig_3_2.png
@@ -79,8 +165,8 @@ repo/
 
 ## How to Reproduce
 
-1. Open the notebook directly in Google Colab: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1tFqvWZJCOnxTFL-_UfzgPPMvZm5h9ES9?usp=sharing)
-2. Run all cells top-to-bottom (`Runtime -> Run all`)
+1. Open the notebook in Google Colab: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1tFqvWZJCOnxTFL-_UfzgPPMvZm5h9ES9?usp=sharing)
+2. Run all cells top-to-bottom (`Runtime → Run all`)
 3. Cell 2 installs all dependencies and downloads the dataset automatically from PhysioNet
 
 > The dataset (~180 MB) is downloaded directly from PhysioNet in Cell 2. No manual download needed.
@@ -94,12 +180,12 @@ repo/
 | 1. Setup & Imports | Install dependencies, import libraries, set `RANDOM_STATE = 42` |
 | 2. Load Dataset | Download Brugada-HUCA from PhysioNet via `wfdb` |
 | 3. EDA | Class distribution, ECG signal plots, beat alignment, data quality check |
-| 4. Preprocessing | Bandpass filter (0.5-40 Hz), z-score normalization |
-| 5. Feature Engineering | 43 features from V1-V3: statistical, ST-T morphology, HRV, PSD |
+| 4. Preprocessing | Bandpass filter (0.5–40 Hz), z-score normalization |
+| 5. Feature Engineering | 43 features from V1–V3: statistical, ST-T morphology, HRV, PSD |
 | 6. Class Imbalance | `class_weight='balanced'` (SMOTE excluded: instability with n~12/fold) |
 | 7. Modeling | 5-Fold CV: Logistic Regression, Random Forest, Gradient Boosting |
 | 8. Evaluation | Confusion matrix, ROC, PR curve, threshold analysis, clinical metrics |
-| 9. Interpretability | SHAP beeswarm + bar plot, ablation study V1-V3 vs. all-12-leads |
+| 9. Interpretability | SHAP beeswarm + bar plot, ablation study V1–V3 vs. all-12-leads |
 | 10. Limitations | Error analysis, honest discussion of failure modes |
 | 11. Citations | Mandatory PhysioNet + dataset citations |
 | 12. Model Export | Save model + artifacts, inference function template |
@@ -136,7 +222,17 @@ AUC-ROC: 0.716 | PR-AUC: 0.394 | Bootstrap 95% CI: [0.429, 0.905]
 | PPV (Precision) | 0.364 |
 | **NPV** | **0.925** |
 
-NPV = 0.925: when the model predicts "Normal", 92.5% of those patients are genuinely low-risk. Strong rule-out value for initial screening.
+> NPV = 0.925: when the model predicts "Normal", 92.5% of those patients are genuinely low-risk — strong rule-out value for initial screening.
+
+---
+
+## Interpretability
+
+SHAP analysis confirms clinically meaningful features aligned with **Type 1 Brugada ECG criteria**:
+
+- `V3_st_slope`
+- `V2_st_slope`
+- `V1_t_sign`
 
 ---
 
@@ -144,14 +240,17 @@ NPV = 0.925: when the model predicts "Normal", 92.5% of those patients are genui
 
 - Threshold 0.40 was selected via Youden's J **on the test set** (illustrative purposes). Recall = 0.800 should be interpreted as an **upper-bound estimate** pending prospective validation.
 - Single-center dataset (HUCA, Spain): distribution shift risk for Southeast Asian populations.
-- Low signal resolution (100 Hz vs. >=500 Hz clinical standard).
-- This model is a **screening aid only**, not a replacement for electrophysiologist diagnosis.
+- Small test set (n=73).
+- Low signal resolution (100 Hz vs. ≥500 Hz clinical standard).
+- This model is a **research prototype** and **screening aid only**, not a replacement for electrophysiologist diagnosis.
 
 ---
 
-## Finally, There's Always Hope
+## There's Always Hope
 
-Our research indicates that modern smartwatches, capable of recording ECG data at frequencies between 100 Hz and 250 Hz, offer a transformative opportunity to bridge the gap between consumer technology and clinical diagnostics. By aggregating data from both healthy individuals and those with Brugada Syndrome, we can develop increasingly sophisticated models that, while not yet a replacement for clinical standards, provide a vital starting point for early detection. Central to this vision is a commitment to **data ethics and transparency**; we aim to collect this information solely through voluntary contributions via a dedicated app or web portal, ensuring users have full agency over their data. We remain optimistic that as these technologies evolve, the synergy between high-fidelity hardware and trained models will eventually meet professional benchmarks, offering a life-saving tool for many in the years to come.
+Modern smartwatches, capable of recording ECG data at frequencies between 100 Hz and 250 Hz, offer a transformative opportunity to bridge the gap between consumer technology and clinical diagnostics. By aggregating data from both healthy individuals and those with Brugada Syndrome, we can develop increasingly sophisticated models that, while not yet a replacement for clinical standards, provide a vital starting point for early detection.
+
+Central to this vision is a commitment to **data ethics and transparency** — we aim to collect this information solely through voluntary contributions via a dedicated app or web portal, ensuring users have full agency over their data. We remain optimistic that as these technologies evolve, the synergy between high-fidelity hardware and trained models will eventually meet professional benchmarks, offering a life-saving tool for many in the years to come.
 
 ---
 
@@ -161,11 +260,11 @@ Our research indicates that modern smartwatches, capable of recording ECG data a
 > Cortez, N. C., & Iglesias, D. G. (2026). Brugada-HUCA: 12-Lead ECG Recordings for the Study of Brugada Syndrome (version 1.0.0). PhysioNet. https://doi.org/10.13026/0m2w-dy83
 
 **PhysioNet Platform:**
-> Goldberger, A. L., et al. (2000). PhysioBank, PhysioToolkit, and PhysioNet: Components of a new research resource for complex physiologic signals. Circulation, 101(23), e215-e220.
+> Goldberger, A. L., et al. (2000). PhysioBank, PhysioToolkit, and PhysioNet: Components of a new research resource for complex physiologic signals. *Circulation*, 101(23), e215–e220.
 
 **Key Libraries:**
-- Makowski, D., et al. (2021). NeuroKit2. *Behavior Research Methods*, 53(4), 1689-1696.
-- Pedregosa, F., et al. (2011). Scikit-learn. *JMLR*, 12, 2825-2830.
+- Makowski, D., et al. (2021). NeuroKit2. *Behavior Research Methods*, 53(4), 1689–1696.
+- Pedregosa, F., et al. (2011). Scikit-learn. *JMLR*, 12, 2825–2830.
 - Lundberg, S. M., & Lee, S. I. (2017). A unified approach to interpreting model predictions. *NeurIPS*, 30.
 
 ---
